@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
+#import time
 
 
 class NewVisitorTest(unittest.TestCase):
@@ -38,21 +39,26 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: go to dentist' for row in rows),
-            "New to-do item did not appear in table"
-        )
+        self.assertIn('1: go to dentist', [row.text for row in rows])
 
         # There is still a text box inviting him to add another item.
-        # He enters, "finish TDD tutorial and Praise our goat overlord"
-        self.fail('finish the test!')
+        # He enters, "finish TDD tutorial and praise our goat overlord"
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('finish TDD tutorial and praise our goat overlord')
+        inputbox.send_keys(Keys.ENTER)
 
         # The page updates again and now shows both items on his list
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(
+            '2: finish TDD tutorial and praise our goat overlord',
+            [row.text for row in rows]
+        )
 
         # Chris wonders whether the site will remember his list. He then
         # that the site has generated a unique URL for him -- there is
         # some explainatory text to that effect.
-
+        self.fail('Finish the test!')
         # He visits that URL - his to-do list is still there.
 
         # Satisfied, he goes back to sleep
